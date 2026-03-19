@@ -6,7 +6,7 @@ export const ETH_CHAINS = [mainnet, arbitrum, base, polygon, optimism, sepolia]
 export const NETWORK_COLORS = {
   ethereum: {
     color: 'green',
-    bgVariant: 'bg-green-600',
+    bgVariant: 'bg-[#a3be8c]',
   },
   arbitrum: {
     color: 'sky',

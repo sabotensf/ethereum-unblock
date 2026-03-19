@@ -1,0 +1,10 @@
+{
+  "name": "RecordPool",
+  "short_name": "RecordPool",
+  "description": "Phygital Music on the Blockchain",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#2e3440",
+  "theme_color": "#2e3440",
+  "icons": []
+}

@@ -19,6 +19,9 @@
 .DS_Store
 *.pem
 
+# recordpool dev log
+/recordpool.log
+
 # debug
 npm-debug.log*
 yarn-debug.log*
@@ -46,10 +49,8 @@ next-env.d.ts
 **/hardhat/cache
 **/hardhat/artifacts
 
-# forge
-**/foundry/cache/
-**/foundry/out/
-**/foundry/.env
+# runtime data
+packages/app/data/
 
 
 # wagmi recommends to ignore their generated file

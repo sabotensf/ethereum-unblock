@@ -1,8 +1,8 @@
 export const SITE_EMOJI = '⚡'
-export const SITE_NAME = 'Nexth'
-export const SITE_INFO = 'Quickly ship Web3 Apps'
+export const SITE_NAME = 'RecordPool Unblock Demo'
+export const SITE_INFO = 'Phygital Music on the Blockchain'
 export const SITE_DESCRIPTION =
-  'A Next.js + Ethereum starter kit with Viem, Wagmi, Web3Modal, SIWE, Tailwind, daisyUI and more!'
+  'A demo site for the latest prototype of RecordPool using EAS (Ethereum Attestation Service)'
 export const SITE_URL = 'https://nexth.vercel.app'
 
 export const SOCIAL_TWITTER = 'wslyvh'

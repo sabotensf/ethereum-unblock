@@ -1,2 +1,88 @@
 @import 'tailwindcss';
 @plugin "daisyui";
+
+/* Base font */
+body {
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-weight: 300;
+}
+
+/* Nord palette */
+:root {
+  --nord0: #2e3440;
+  --nord1: #3b4252;
+  --nord2: #434c5e;
+  --nord3: #4c566a;
+  --nord4: #d8dee9;
+  --nord5: #e5e9f0;
+  --nord6: #eceff4;
+  --nord7: #8fbcbb;
+  --nord8: #88c0d0;
+  --nord9: #81a1c1;
+  --nord10: #5e81ac;
+  --nord11: #bf616a;
+  --nord12: #d08770;
+  --nord13: #ebcb8b;
+  --nord14: #a3be8c;
+  --nord15: #b48ead;
+}
+
+@keyframes pulse-glow {
+  0% { box-shadow: 0 0 0 0 rgba(163, 190, 140, 0.7); transform: scale(1); }
+  70% { box-shadow: 0 0 0 10px rgba(163, 190, 140, 0); transform: scale(1.05); }
+  100% { box-shadow: 0 0 0 0 rgba(163, 190, 140, 0); transform: scale(1); }
+}
+
+.verified-badge {
+  display: inline-flex !important;
+  align-items: center;
+  padding: 3px 10px;
+  background-color: rgba(163, 190, 140, 0.1);
+  border: 1px solid #a3be8c;
+  border-radius: 9999px;
+  color: #a3be8c !important;
+  font-weight: bold !important;
+  font-size: 10px !important;
+  animation: pulse-glow 2s infinite;
+}
+
+/* Hide Next.js dev error overlay */
+nextjs-portal { display: none !important; }
+
+@keyframes vinyl-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes card-reveal {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 8px 2px rgba(180,142,173,0.3); }
+  50% { box-shadow: 0 0 24px 8px rgba(180,142,173,0.7); }
+}
+
+@keyframes bar {
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1); }
+}
+
+.vinyl-spin { animation: vinyl-spin 2s linear infinite; }
+.card-reveal { animation: card-reveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.glow-pulse { animation: glow-pulse 1.2s ease-in-out infinite; }
+.pulse-glow { animation: pulse-glow 2s infinite; }
+
+.sound-bars { display: flex; align-items: flex-end; gap: 3px; height: 20px; }
+.sound-bars span {
+  display: block;
+  width: 3px;
+  background: #88c0d0;
+  transform-origin: bottom;
+}
+.sound-bars span:nth-child(1) { animation: bar 0.8s ease-in-out infinite 0.0s; }
+.sound-bars span:nth-child(2) { animation: bar 0.8s ease-in-out infinite 0.15s; }
+.sound-bars span:nth-child(3) { animation: bar 0.8s ease-in-out infinite 0.3s; }
+.sound-bars span:nth-child(4) { animation: bar 0.8s ease-in-out infinite 0.45s; }
+.sound-bars span:nth-child(5) { animation: bar 0.8s ease-in-out infinite 0.6s; }

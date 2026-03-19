@@ -7,8 +7,14 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "yarn workspaces -pt run dev",
-    "build": "yarn workspaces -pt run build",
-    "test": "yarn workspaces -pt run test"
-  }
+    "dev": "bun run --cwd packages/app dev",
+    "prod": "bun run --cwd packages/app prod",
+    "build": "bun run --filter '*' build",
+    "test": "bun run --filter '*' test"
+  },
+  "trustedDependencies": [
+    "@pokusew/pcsclite",
+    "@reown/appkit",
+    "unrs-resolver"
+  ]
 }

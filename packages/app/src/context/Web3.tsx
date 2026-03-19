@@ -30,6 +30,9 @@ createAppKit({
     email: true,
     onramp: true,
   },
+  themeVariables: {
+    '--w3m-accent': '#5e81ac', // nord10
+  },
 })
 
 export function Web3Provider(props: Props) {

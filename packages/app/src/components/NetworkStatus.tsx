@@ -13,14 +13,8 @@ export function NetworkStatus() {
   const color = GetNetworkColor(networkName, 'bgVariant')
 
   return (
-    <div className='flex items-center gap-2 p-4'>
-      <div className={`badge badge-info ${color}`}>{networkName}</div>
-      {explorerUrl && (
-        <LinkComponent href={explorerUrl}>
-          <p className='text-xs'># {block.data?.toString()}</p>
-        </LinkComponent>
-      )}
-      {!explorerUrl && <p className='text-xs'># {block.data?.toString()}</p>}
+    <div className='flex items-center'>
+      <div className={`badge badge-info ${color} text-[#eceff4]`}>{networkName}</div>
     </div>
   )
 }
