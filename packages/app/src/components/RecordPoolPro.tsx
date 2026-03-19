@@ -189,8 +189,12 @@ const [status, setStatus] = useState<'READY' | 'SCANNING' | 'VERIFYING' | 'MATCH
       <div style={{
         borderColor: playing ? N.frost : status === 'MATCHED' ? N.green : N.bg3,
         boxShadow: playing ? `0 0 24px 6px ${N.frost}66` : status === 'MATCHED' ? `0 0 16px 4px ${N.green}44` : 'none',
-      }} className={`w-52 h-52 sm:w-60 sm:h-60 rounded-full border-4 overflow-hidden transition-all duration-700 ${playing ? 'vinyl-spin' : ''}`}>
-        <img src='/teddy-bear-boogie.jpg' alt='Teddy Bear Boogie' className='w-full h-full object-cover' />
+      }} className={`w-52 h-52 sm:w-60 sm:h-60 rounded-full border-4 overflow-hidden transition-all duration-700 ${status !== 'MATCHED' ? 'vinyl-spin' : playing ? 'vinyl-spin' : ''}`}>
+        <img
+          src={status === 'MATCHED' ? '/teddy-bear-boogie.jpg' : '/recordpool-vinyl.svg'}
+          alt={status === 'MATCHED' ? 'Teddy Bear Boogie' : 'RecordPool'}
+          className='w-full h-full object-cover'
+        />
       </div>
 
       {status !== 'MATCHED' && (

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- bg base -->
+  <circle cx="100" cy="100" r="100" fill="#2e3440"/>
+  <!-- outer ring 48-50% (48-50px on 100px radius) -->
+  <circle cx="100" cy="100" r="50" fill="#4c566a"/>
+  <circle cx="100" cy="100" r="48" fill="#2e3440"/>
+  <!-- inner thin ring 15-17% -->
+  <circle cx="100" cy="100" r="17" fill="#4c566a"/>
+  <circle cx="100" cy="100" r="15" fill="#2e3440"/>
+  <!-- center spot 0-12% -->
+  <circle cx="100" cy="100" r="12" fill="#4c566a"/>
+  <!-- border -->
+  <circle cx="100" cy="100" r="99" fill="none" stroke="#4c566a" stroke-width="2"/>
+</svg>
