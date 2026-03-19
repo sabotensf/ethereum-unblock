@@ -1,6 +1,8 @@
-# RecordPool
+# Ethereum Unblock — RecordPool EAS
 
-Phygital music record provenance — NFC chip tap → onchain EAS attestation → royalty split via 0xSplits.
+Built at [Ethereum Unblock: AI-driven Design Sprint](https://lu.ma/unblock-sf-2026) — a 3-day hackathon hosted at Frontier Tower, San Francisco (March 10–12, 2026), organized by the Ethereum Foundation and Ethereum House SF. The event brought together builders and domain experts to explore how AI, smart contracts, and programmable cryptography can unlock new capabilities on Ethereum.
+
+RecordPool EAS is my project from that event: phygital music record provenance — NFC chip tap → onchain EAS attestation → royalty split via 0xSplits.
 
 ## Stack
 
