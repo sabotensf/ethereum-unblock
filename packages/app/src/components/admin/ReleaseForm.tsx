@@ -57,7 +57,7 @@ function Field({ fieldKey, label, placeholder, value, onChange, optional }: {
         value={value}
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
-        style={{ backgroundColor: N.bg2, borderColor: N.bg3, color: N.fg, outline: 'none' }}
+        style={{ backgroundColor: N.bg2, borderColor: N.bg3, color: N.fg3, outline: 'none' }}
         onFocus={e => (e.target.style.borderColor = N.frost)}
         onBlur={e => (e.target.style.borderColor = N.bg3)}
         className='w-full px-3 py-2 text-sm font-mono border'
@@ -72,22 +72,20 @@ export function ReleaseForm({ value, onChange, onNext }: Props) {
   return (
     <div className='flex flex-col gap-6 w-full max-w-sm'>
       <div>
-        <p style={{color: N.frost}} className='text-[10px] font-bold tracking-widest mb-1'>STEP 1 OF 3</p>
-        <h2 style={{color: N.fg}} className='text-lg font-bold tracking-wide'>Release Metadata</h2>
+        <p style={{color: N.frost}} className='text-[10px] font-bold tracking-widest mb-1'>STEP 1 OF 4</p>
+        <h2 style={{color: N.fg3}} className='text-lg font-bold tracking-wide'>Release Metadata</h2>
         <p style={{color: N.fg3}} className='text-xs mt-1'>Enter DDEX-compliant fields. Applied to all chips in this batch.</p>
       </div>
 
       {/* Cover art preview */}
-      {value.coverArtUrl && (
-        <div className='flex justify-center'>
-          <img
-            src={value.coverArtUrl}
-            alt='Cover art'
-            className='w-32 h-32 object-cover rounded-full'
-            style={{border: `2px solid ${N.bg3}`}}
-          />
-        </div>
-      )}
+      <div className='flex justify-center'>
+        <img
+          src={value.coverArtUrl || '/recordpool-vinyl.svg'}
+          alt={value.coverArtUrl ? 'Cover art' : 'RecordPool'}
+          className='w-40 h-40 object-cover rounded-full'
+          style={{border: `2px solid ${N.bg3}`}}
+        />
+      </div>
 
       <div className='flex flex-col gap-3'>
         {ALL_FIELDS.map(f => (

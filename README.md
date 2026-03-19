@@ -4,6 +4,8 @@ Built at [Ethereum Unblock: AI-driven Design Sprint](https://lu.ma/unblock-sf-20
 
 RecordPool EAS is my project from that event: phygital music record provenance — NFC chip tap → onchain EAS attestation → royalty split via 0xSplits.
 
+Bootstrapped quickly using [Nexth](https://github.com/usecaselab/nexth) from the Ethereum Use Case Lab — a Next.js + Ethereum starter kit.
+
 ## Stack
 
 - Next.js 15 (App Router)

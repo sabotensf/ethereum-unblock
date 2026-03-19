@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useRef } from 'react'
-import { ChipEntry, CHIP_TYPE, scanHalo } from '@/utils/recordpool'
+import { ChipEntry } from '@/utils/recordpool'
 import { ethers } from 'ethers'
 
 const N = {
@@ -18,17 +18,9 @@ const N = {
   teal:   '#8fbcbb',
 }
 
-// Detect scan method available in this environment
-function getScanMethod(): 'halo' | 'web-nfc' | 'usb' {
-  if (CHIP_TYPE === 'HALO') return 'halo'
-  if ('NDEFReader' in window) return 'web-nfc'
+function getScanMethod(): 'web-nfc' | 'usb' {
+  if (typeof window !== 'undefined' && 'NDEFReader' in window) return 'web-nfc'
   return 'usb'
-}
-
-const METHOD_LABEL: Record<ReturnType<typeof getScanMethod>, string> = {
-  'halo':    'HaLo (execHaloCmdWeb)',
-  'web-nfc': 'Web NFC (NDEFReader)',
-  'usb':     'USB PC/SC Reader',
 }
 
 interface Props {
@@ -41,7 +33,7 @@ interface Props {
 
 export function ChipScanner({ chips, onAdd, onRemove, onNext, onBack }: Props) {
   const [scanning, setScanning] = useState(false)
-  const [method, setMethod] = useState<ReturnType<typeof getScanMethod>>('usb')
+  const [method, setMethod] = useState<'web-nfc' | 'usb'>('usb')
   const [error, setError] = useState('')
   const [readerName, setReaderName] = useState('')
   const sseRef = useRef<EventSource | null>(null)
@@ -106,14 +98,7 @@ export function ChipScanner({ chips, onAdd, onRemove, onNext, onBack }: Props) {
     setScanning(true)
     setError('')
     try {
-      if (method === 'halo') {
-        const { chipAddress } = await scanHalo()
-        if (chips.some(c => c.etherAddress === chipAddress)) {
-          setError('Chip already registered')
-        } else {
-          onAdd({ id: crypto.randomUUID(), etherAddress: chipAddress, status: 'pending' })
-        }
-      } else if (method === 'web-nfc') {
+      if (method === 'web-nfc') {
         await new Promise<void>((resolve, reject) => {
           const ndef = new (window as any).NDEFReader()
           ndef.scan()
@@ -141,8 +126,8 @@ export function ChipScanner({ chips, onAdd, onRemove, onNext, onBack }: Props) {
   return (
     <div className='flex flex-col gap-6 w-full max-w-sm'>
       <div>
-        <p style={{color: N.frost}} className='text-[10px] font-bold tracking-widest mb-1'>STEP 2 OF 3</p>
-        <h2 style={{color: N.fg}} className='text-lg font-bold tracking-wide'>Register Chips</h2>
+        <p style={{color: N.frost}} className='text-[10px] font-bold tracking-widest mb-1'>STEP 2 OF 4</p>
+        <h2 style={{color: N.fg3}} className='text-lg font-bold tracking-wide'>Register Chips</h2>
         {method !== 'usb' && (
           <p style={{color: N.fg3}} className='text-xs mt-1'>
             <span style={{color: N.teal}} className='font-mono'>Tap each chip to register it</span>
@@ -163,7 +148,7 @@ export function ChipScanner({ chips, onAdd, onRemove, onNext, onBack }: Props) {
             {scanning ? '📡 READY — TAP CHIP TO REGISTER' : '✕ READER OFFLINE'}
           </p>
           {readerName && (
-            <p style={{color: N.fg}} className='text-[10px] font-mono'>{readerName}</p>
+            <p style={{color: N.fg3}} className='text-xs font-mono'>{readerName}</p>
           )}
         </div>
       ) : (
@@ -202,9 +187,9 @@ export function ChipScanner({ chips, onAdd, onRemove, onNext, onBack }: Props) {
                   <span style={{color: N.bg3}} className='text-xs font-mono w-5 shrink-0'>{i + 1}</span>
                   <div className='flex items-center gap-2'>
                     {chip.serialNumber && (
-                      <span style={{color: N.fg}} className='text-xs font-mono'>{chip.serialNumber}</span>
+                      <span style={{color: N.fg3}} className='text-xs font-mono'>{chip.serialNumber}</span>
                     )}
-                    <span style={{color: N.fg3}} className='text-[11px] font-mono'>
+                    <span style={{color: N.fg3}} className='text-xs font-mono'>
                       {chip.etherAddress.slice(0, 10)}…{chip.etherAddress.slice(-8)}
                     </span>
                   </div>

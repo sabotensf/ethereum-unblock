@@ -1,7 +1,11 @@
 @import 'tailwindcss';
 @plugin "daisyui";
 
-/* Base font */
+/* Base font and background — set early to prevent white flash */
+html, body {
+  background-color: #3b4252;
+}
+
 body {
   font-family: var(--font-inter), system-ui, sans-serif;
   font-weight: 300;

@@ -183,7 +183,7 @@ const [status, setStatus] = useState<'READY' | 'SCANNING' | 'VERIFYING' | 'MATCH
   }
 
   return (
-    <div style={{backgroundColor: N.bg1}} className='flex flex-col items-center gap-2 text-center w-full'>
+    <div style={{backgroundColor: N.bg1}} className='flex flex-col items-center gap-2 text-center w-full pt-6 sm:pt-2'>
 
       {/* Vinyl disc */}
       <div style={{
@@ -198,13 +198,13 @@ const [status, setStatus] = useState<'READY' | 'SCANNING' | 'VERIFYING' | 'MATCH
       </div>
 
       {status !== 'MATCHED' && (
-        <h1 style={{color: N.fg}} className='text-2xl font-bold tracking-widest'>RecordPool</h1>
+        <h1 style={{color: N.fg3}} className='text-2xl font-bold tracking-widest'>RecordPool</h1>
       )}
 
       <p className='text-sm'>
-        {status === 'READY'     && <span style={{color: retap ? N.red : N.yellow}}>{retap ? 'Retap the record' : tapRequired ? 'Tap chip to verify' : 'Verifying Record'}</span>}
-        {status === 'SCANNING'  && <span style={{color: N.yellow}}>Reading Hardware UID</span>}
-        {status === 'VERIFYING' && <span style={{color: N.yellow}}>Checking Attestation</span>}
+        {status === 'READY'     && <span style={{color: retap ? N.red : N.frost}}>{retap ? 'Retap the record' : tapRequired ? 'Tap chip to verify' : 'Verifying Record'}</span>}
+        {status === 'SCANNING'  && <span style={{color: N.frost}}>Reading Hardware UID</span>}
+        {status === 'VERIFYING' && <span style={{color: N.frost}}>Checking Attestation</span>}
         {status === 'ERROR'     && <span style={{color: N.red}}>No valid attestation found</span>}
       </p>
       {status === 'ERROR' && TARGET_HASH && (
@@ -224,9 +224,9 @@ const [status, setStatus] = useState<'READY' | 'SCANNING' | 'VERIFYING' | 'MATCH
 
       {!retap && (status === 'READY' || status === 'SCANNING' || status === 'VERIFYING') && (
         <div className='flex gap-1'>
-          <span style={{backgroundColor: N.yellow}} className='w-2 h-2 rounded-full animate-bounce [animation-delay:0ms]' />
-          <span style={{backgroundColor: N.yellow}} className='w-2 h-2 rounded-full animate-bounce [animation-delay:150ms]' />
-          <span style={{backgroundColor: N.yellow}} className='w-2 h-2 rounded-full animate-bounce [animation-delay:300ms]' />
+          <span style={{backgroundColor: N.frost}} className='w-2 h-2 rounded-full animate-bounce [animation-delay:0ms]' />
+          <span style={{backgroundColor: N.frost}} className='w-2 h-2 rounded-full animate-bounce [animation-delay:150ms]' />
+          <span style={{backgroundColor: N.frost}} className='w-2 h-2 rounded-full animate-bounce [animation-delay:300ms]' />
         </div>
       )}
 
@@ -246,7 +246,7 @@ const [status, setStatus] = useState<'READY' | 'SCANNING' | 'VERIFYING' | 'MATCH
         const territory   = m?.territory     || ''
         const language    = m?.language      || ''
         return (
-        <div className='card-reveal flex flex-col items-center gap-2 w-full max-w-xs px-4 pb-24'>
+        <div className='card-reveal flex flex-col items-center gap-2 w-full max-w-xs px-4 pb-24 sm:pb-4'>
           <div style={{backgroundColor: N.bg1, borderColor: N.bg3}} className='w-full border p-3 text-left'>
             <div className='mb-2 flex flex-col items-center gap-1'>
               <span className="verified-badge">● VERIFIED ONCHAIN</span>
@@ -257,7 +257,7 @@ const [status, setStatus] = useState<'READY' | 'SCANNING' | 'VERIFYING' | 'MATCH
                 </span>
               )}
             </div>
-            <p style={{color: N.fg}} className='font-semibold text-base leading-snug'>{title}</p>
+            <p style={{color: N.fg3}} className='font-semibold text-base leading-snug'>{title}</p>
             <p style={{color: N.fg3}} className='text-sm mt-0.5'>{artist}</p>
             <div style={{color: N.fg3}} className='text-xs mt-2 space-y-0.5 font-light'>
               {label       && <p>{label}</p>}

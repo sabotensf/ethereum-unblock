@@ -55,7 +55,7 @@ export function GET(req: NextRequest) {
   if (ctr !== null) params.set('ctr', ctr.toString())
   const tapUrl = `${base}/tap?${params.toString()}`
   return new Response(
-    `<!doctype html><html><head><script>location.replace(${JSON.stringify(tapUrl)})</script></head></html>`,
+    `<!doctype html><html><head><style>html,body{background:#3b4252;margin:0}</style><script>location.replace(${JSON.stringify(tapUrl)})</script></head></html>`,
     { headers: { 'Content-Type': 'text/html' } }
   )
 }

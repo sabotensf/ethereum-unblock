@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { ChipEntry } from '@/utils/recordpool'
 
 const N = {
@@ -81,7 +81,6 @@ export function ChipWriter({ chips, onBack, onReset }: Props) {
     chips.map(c => ({ ...c, writeStatus: 'idle' }))
   )
   const [currentIndex, setCurrentIndex] = useState<number | null>(null)
-  const [started, setStarted] = useState(false)
 
   // ── Free-write test mode (no chips in queue) ────────────────────────────
   const [testStatus, setTestStatus] = useState<WriteStatus>('idle')
@@ -111,12 +110,9 @@ export function ChipWriter({ chips, onBack, onReset }: Props) {
     if (!entry) return
 
     setCurrentIndex(index)
-    updateEntry(entry.id, { writeStatus: 'waiting' })
-
     const { promise } = writeViaACR(url)
 
     try {
-      updateEntry(entry.id, { writeStatus: 'writing' })
       await promise
       updateEntry(entry.id, { writeStatus: 'done' })
 
@@ -131,10 +127,9 @@ export function ChipWriter({ chips, onBack, onReset }: Props) {
     }
   }
 
-  const start = () => {
-    setStarted(true)
-    writeNext(0)
-  }
+  useEffect(() => {
+    if (!testMode) writeNext(0)
+  }, [])
 
   const retryErrors = () => {
     const firstError = queue.findIndex(c => c.writeStatus === 'error')
@@ -146,7 +141,7 @@ export function ChipWriter({ chips, onBack, onReset }: Props) {
   }
 
   const STATUS_COLOR: Record<WriteStatus, string> = {
-    idle:    N.bg3,
+    idle:    N.fg3,
     waiting: N.yellow,
     writing: N.frost,
     done:    N.green,
@@ -154,7 +149,7 @@ export function ChipWriter({ chips, onBack, onReset }: Props) {
   }
 
   const STATUS_LABEL: Record<WriteStatus, string> = {
-    idle:    '○ IDLE',
+    idle:    '○ BLANK',
     waiting: '⏳ WAITING',
     writing: '✍ WRITING',
     done:    '✓ WRITTEN',
@@ -165,7 +160,7 @@ export function ChipWriter({ chips, onBack, onReset }: Props) {
     <div className='flex flex-col gap-6 w-full max-w-sm'>
       <div>
         <p style={{color: N.frost}} className='text-[10px] font-bold tracking-widest mb-1'>STEP 4 OF 4</p>
-        <h2 style={{color: N.fg}} className='text-lg font-bold tracking-wide'>Write URLs</h2>
+        <h2 style={{color: N.fg3}} className='text-lg font-bold tracking-wide'>Write URLs</h2>
         <p style={{color: N.fg3}} className='text-xs mt-1'>
           Burns the RecordPool URL to each NTAG chip via ACR1552. Tap each chip when prompted.
         </p>
@@ -173,22 +168,19 @@ export function ChipWriter({ chips, onBack, onReset }: Props) {
 
       {/* URL input */}
       <div className='flex flex-col gap-1'>
-        <label style={{color: N.fg3}} className='text-[10px] font-bold tracking-widest font-mono'>TARGET URL</label>
+        <label style={{color: N.fg3}} className='text-xs font-bold tracking-widest font-mono'>TARGET URL</label>
         <input
           value={url}
           onChange={e => setUrl(e.target.value)}
-          disabled={started}
+          disabled={!testMode}
           style={{
             backgroundColor: N.bg2,
             borderColor: N.bg3,
-            color: started ? N.fg3 : N.fg,
-            opacity: started ? 0.6 : 1,
+            color: N.fg3,
+            opacity: !testMode ? 0.6 : 1,
           }}
           className='w-full px-3 py-2 text-sm font-mono border'
         />
-        <p style={{color: N.bg3}} className='text-[10px] font-mono'>
-          %%MIRROR%% → chip UID at tap time
-        </p>
       </div>
 
       {/* ── Test mode UI ── */}
@@ -243,18 +235,18 @@ export function ChipWriter({ chips, onBack, onReset }: Props) {
           <p style={{color: N.frost}} className='text-xs font-bold tracking-widest animate-pulse'>
             TAP CHIP #{currentIndex + 1} NOW
           </p>
-          <p style={{color: N.fg3}} className='text-[10px] font-mono mt-1'>
+          <p style={{color: N.fg3}} className='text-xs font-mono mt-1'>
             {queue[currentIndex]?.etherAddress.slice(0, 8)}…{queue[currentIndex]?.etherAddress.slice(-6)}
           </p>
         </div>
       )}
 
       {/* Progress bar */}
-      {!testMode && started && (
+      {!testMode && (
         <div>
           <div className='flex justify-between mb-1'>
-            <span style={{color: N.fg3}} className='text-[10px] font-mono'>PROGRESS</span>
-            <span style={{color: allDone ? N.green : N.fg3}} className='text-[10px] font-mono font-bold'>
+            <span style={{color: N.fg3}} className='text-xs font-mono'>PROGRESS</span>
+            <span style={{color: allDone ? N.green : N.fg3}} className='text-xs font-mono font-bold'>
               {written} / {queue.length} written
             </span>
           </div>
@@ -272,7 +264,7 @@ export function ChipWriter({ chips, onBack, onReset }: Props) {
       )}
 
       {/* Chip list */}
-      {!testMode && <div style={{borderColor: N.bg3}} className='border max-h-52 overflow-y-auto'>
+      {!testMode && <div style={{borderColor: N.bg3}} className='border'>
         {queue.map((chip, i) => (
           <div
             key={chip.id}
@@ -283,20 +275,23 @@ export function ChipWriter({ chips, onBack, onReset }: Props) {
             className='flex items-center justify-between px-3 py-2 border-b last:border-b-0'
           >
             <div className='flex items-center gap-2'>
-              <span style={{color: N.bg3}} className='text-[10px] font-mono w-5'>{i + 1}</span>
-              <span style={{color: N.fg3}} className='text-[10px] font-mono'>
+              <span style={{color: N.fg3}} className='text-xs font-mono w-5'>{i + 1}</span>
+              {chip.serialNumber && (
+                <span style={{color: N.frost}} className='text-xs font-mono whitespace-nowrap'>{chip.serialNumber}</span>
+              )}
+              <span style={{color: N.fg3}} className='text-xs font-mono'>
                 {chip.etherAddress.slice(0, 8)}…{chip.etherAddress.slice(-6)}
               </span>
             </div>
             <div className='flex flex-col items-end gap-0.5'>
               <span
                 style={{color: STATUS_COLOR[chip.writeStatus]}}
-                className='text-[9px] font-mono font-bold'
+                className='text-xs font-mono font-bold'
               >
                 {STATUS_LABEL[chip.writeStatus]}
               </span>
               {chip.writeError && (
-                <span style={{color: N.red}} className='text-[8px] font-mono'>
+                <span style={{color: N.red}} className='text-xs font-mono'>
                   {chip.writeError}
                 </span>
               )}
@@ -307,41 +302,31 @@ export function ChipWriter({ chips, onBack, onReset }: Props) {
 
       {/* Errors */}
       {!testMode && queue.some(c => c.writeStatus === 'error') && (
-        <p style={{color: N.red}} className='text-[10px] font-mono'>
+        <p style={{color: N.red}} className='text-xs font-mono'>
           {queue.filter(c => c.writeStatus === 'error').length} chip(s) failed.{' '}
           <button onClick={retryErrors} style={{color: N.frost}} className='underline'>Retry errors</button>
         </p>
       )}
 
       {/* Actions */}
-      {!testMode && !started ? (
-        <div className='flex gap-3'>
-          <button
-            onClick={onBack}
-            style={{borderColor: N.bg3, color: N.fg3}}
-            className='flex-1 py-3 border text-sm font-bold tracking-widest uppercase'
-          >
-            ← BACK
-          </button>
-          <button
-            onClick={start}
-            style={{backgroundColor: N.green, color: N.bg}}
-            className='flex-grow py-3 text-sm font-bold tracking-widest uppercase'
-          >
-            START WRITING
-          </button>
-        </div>
-      ) : !testMode && allDone ? (
-        <div className='flex gap-3'>
-          <button
-            onClick={onReset}
-            style={{backgroundColor: N.frost, color: N.bg}}
-            className='w-full py-3 text-sm font-bold tracking-widest uppercase'
-          >
-            ✓ ALL DONE — NEW BATCH
-          </button>
-        </div>
-      ) : null}
+      {!testMode && allDone && (
+        <button
+          onClick={onReset}
+          style={{backgroundColor: N.frost, color: N.bg}}
+          className='w-full py-3 text-sm font-bold tracking-widest uppercase'
+        >
+          ✓ ALL DONE — NEW BATCH
+        </button>
+      )}
+      {!testMode && !allDone && queue.some(c => c.writeStatus === 'error') && currentIndex === null && (
+        <button
+          onClick={onBack}
+          style={{borderColor: N.bg3, color: N.fg3}}
+          className='w-full py-3 border text-sm font-bold tracking-widest uppercase'
+        >
+          ← BACK
+        </button>
+      )}
     </div>
   )
 }

@@ -1,66 +1,34 @@
 import { ethers } from 'ethers'
 import { EAS, SchemaEncoder } from '@ethereum-attestation-service/eas-sdk'
-import { execHaloCmdWeb } from '@arx-research/libhalo/api/web'
 
-// Chip configuration
-export const CHIP_TYPE = (process.env.NEXT_PUBLIC_CHIP_TYPE ?? 'NTAG') as 'NTAG' | 'HALO'
-export const HALO_CHIP_ADDRESS = (process.env.NEXT_PUBLIC_HALO_CHIP_ADDRESS ?? '').toLowerCase()
+// EAS network config — set NEXT_PUBLIC_EAS_NETWORK=mainnet to use production
+const EAS_NETWORK = process.env.NEXT_PUBLIC_EAS_NETWORK ?? 'sepolia'
 
-// Fixed challenge message — deterministic so the recovered address is always consistent
-const HALO_CHALLENGE = ethers.id('RecordPool.v1').slice(2) // 32-byte hex, no 0x prefix
+type EasNetwork = 'sepolia' | 'mainnet' | 'optimism' | 'base'
 
-export async function scanHalo(): Promise<{ matched: boolean; chipAddress: string }> {
-  const result = await execHaloCmdWeb({
-    name: 'sign',
-    keyNo: 1,
-    message: HALO_CHALLENGE,
-  }) as { etherAddress: string }
-
-  const chipAddress = result.etherAddress.toLowerCase()
-  return {
-    matched: chipAddress === HALO_CHIP_ADDRESS,
-    chipAddress,
-  }
+const EAS_CONFIG: Record<EasNetwork, {
+  contractAddress: string
+  chainId: number
+  chainName: string
+  safePrefix: string
+  scanBase: string
+  graphql: string
+}> = {
+  sepolia:  { contractAddress: '0xC2679fBD37d54388Ce493F1DB75320D236e1815e', chainId: 11155111, chainName: 'Ethereum Sepolia', safePrefix: 'sep',  scanBase: 'https://sepolia.easscan.org',   graphql: 'https://sepolia.easscan.org/graphql'   },
+  mainnet:  { contractAddress: '0xA1207F3BBa224E2c9c3c6D5aF63D0eb1582Ce587', chainId: 1,        chainName: 'Ethereum Mainnet', safePrefix: 'eth',  scanBase: 'https://easscan.org',           graphql: 'https://easscan.org/graphql'           },
+  optimism: { contractAddress: '0x4200000000000000000000000000000000000021', chainId: 10,       chainName: 'Optimism',         safePrefix: 'oeth', scanBase: 'https://optimism.easscan.org', graphql: 'https://optimism.easscan.org/graphql' },
+  base:     { contractAddress: '0xbD75f629A22Dc1ceD33dDA0b68c546A1c035c458', chainId: 8453,     chainName: 'Base',             safePrefix: 'base', scanBase: 'https://base.easscan.org',     graphql: 'https://base.easscan.org/graphql'     },
 }
 
-const EAS_CONTRACT_ADDRESS = '0xC2679fBD37d54388Ce493F1DB75320D236e1815e' // Sepolia
-
-const EAS_CHAIN_NAMES: Record<string, string> = {
-  '0xC2679fBD37d54388Ce493F1DB75320D236e1815e': 'Ethereum Sepolia',
-  '0xA1207F3BBa224E2c9c3c6D5aF63D0eb1582Ce587': 'Ethereum Mainnet',
-  '0x4200000000000000000000000000000000000021': 'Optimism',
-  '0xbD75f629A22Dc1ceD33dDA0b68c546A1c035c458': 'Base',
-}
-
-const EAS_SAFE_PREFIXES: Record<string, string> = {
-  '0xC2679fBD37d54388Ce493F1DB75320D236e1815e': 'sep',
-  '0xA1207F3BBa224E2c9c3c6D5aF63D0eb1582Ce587': 'eth',
-  '0x4200000000000000000000000000000000000021': 'oeth',
-  '0xbD75f629A22Dc1ceD33dDA0b68c546A1c035c458': 'base',
-}
-
-export const EAS_CHAIN_NAME = EAS_CHAIN_NAMES[EAS_CONTRACT_ADDRESS] ?? 'Unknown Network'
+const EAS_NET = (EAS_CONFIG[EAS_NETWORK as EasNetwork] ?? EAS_CONFIG.sepolia)
+const EAS_CONTRACT_ADDRESS = EAS_NET.contractAddress
+export const EAS_CHAIN_ID   = EAS_NET.chainId
+export const EAS_CHAIN_NAME = EAS_NET.chainName
 export const SAFE_URL = (address: string) =>
-  `https://app.safe.global/home?safe=${EAS_SAFE_PREFIXES[EAS_CONTRACT_ADDRESS] ?? 'eth'}:${address}`
-
-const EAS_SCAN_BASES: Record<string, string> = {
-  '0xC2679fBD37d54388Ce493F1DB75320D236e1815e': 'https://sepolia.easscan.org',
-  '0xA1207F3BBa224E2c9c3c6D5aF63D0eb1582Ce587': 'https://easscan.org',
-  '0x4200000000000000000000000000000000000021': 'https://optimism.easscan.org',
-  '0xbD75f629A22Dc1ceD33dDA0b68c546A1c035c458': 'https://base.easscan.org',
-}
-const EAS_SCAN_BASE = EAS_SCAN_BASES[EAS_CONTRACT_ADDRESS] ?? 'https://sepolia.easscan.org'
-export const EAS_ATTESTATION_URL = (uid: string) => `${EAS_SCAN_BASE}/attestation/view/${uid}`
-export const EAS_SCHEMA_URL = () =>
-  `${EAS_SCAN_BASE}/schema/view/${process.env.NEXT_PUBLIC_EAS_SCHEMA_UID ?? ''}`
-
-const EAS_GRAPHQL_ENDPOINTS: Record<string, string> = {
-  '0xC2679fBD37d54388Ce493F1DB75320D236e1815e': 'https://sepolia.easscan.org/graphql',
-  '0xA1207F3BBa224E2c9c3c6D5aF63D0eb1582Ce587': 'https://easscan.org/graphql',
-  '0x4200000000000000000000000000000000000021': 'https://optimism.easscan.org/graphql',
-  '0xbD75f629A22Dc1ceD33dDA0b68c546A1c035c458': 'https://base.easscan.org/graphql',
-}
-const EAS_GRAPHQL = EAS_GRAPHQL_ENDPOINTS[EAS_CONTRACT_ADDRESS] ?? 'https://sepolia.easscan.org/graphql'
+  `https://app.safe.global/home?safe=${EAS_NET.safePrefix}:${address}`
+export const EAS_ATTESTATION_URL = (uid: string) => `${EAS_NET.scanBase}/attestation/view/${uid}`
+export const EAS_SCHEMA_URL = () => `${EAS_NET.scanBase}/schema/view/${process.env.NEXT_PUBLIC_EAS_SCHEMA_UID ?? ''}`
+const EAS_GRAPHQL = EAS_NET.graphql
 
 export interface AttestationResult {
   uid: string
@@ -204,7 +172,7 @@ export interface ReleaseMetadata {
 
 export interface ChipEntry {
   id: string
-  etherAddress: string   // HaLo: Ethereum address | NTAG: ethers.id(serialNumber)
+  etherAddress: string   // ethers.id(serialNumber)
   serialNumber?: string  // NTAG raw UID e.g. "04:71:67:32:15:19:90"
   status: 'pending' | 'attesting' | 'attested' | 'error'
   attestationUid?: string
@@ -227,13 +195,8 @@ export async function batchAttest(
     const tx = await eas.multiAttest([{
       schema: EAS_SCHEMA_UID,
       data: chips.map(chip => {
-        // Normalize to bytes32: HaLo gives a 20-byte address, NTAG gives a 32-byte hash
-        const nfcUidHash = chip.etherAddress.length === 42
-          ? ethers.zeroPadValue(chip.etherAddress, 32)
-          : chip.etherAddress
-
         return {
-          recipient: chip.etherAddress.length === 42 ? chip.etherAddress : ethers.ZeroAddress,
+          recipient: ethers.ZeroAddress,
           expirationTime: BigInt(0),
           revocable: true,
           data: encoder.encodeData([
@@ -243,7 +206,7 @@ export async function batchAttest(
             { name: 'displayTitle',  value: metadata.displayTitle,  type: 'string' },
             { name: 'pLine',         value: metadata.pLine,         type: 'string' },
             { name: 'cLine',         value: metadata.cLine,         type: 'string' },
-            { name: 'nfcUidHash',    value: nfcUidHash,             type: 'bytes32' },
+            { name: 'nfcUidHash',    value: chip.etherAddress,      type: 'bytes32' },
             { name: 'upc',           value: metadata.upc,           type: 'string' },
             { name: 'labelName',     value: metadata.labelName,     type: 'string' },
             { name: 'genre',         value: metadata.genre,         type: 'string' },
@@ -267,13 +230,25 @@ export async function batchAttest(
       ])
       console.log('[eas] tx.wait() returned:', uids)
     } catch (waitErr: any) {
-      // tx was broadcast; receipt parsing failed or timed out — still mark attested
       console.warn('[eas] tx.wait() threw/timed out:', waitErr?.message)
-      chips.forEach(c => onProgress(c.id, 'attested'))
+      if (waitErr?.message === 'tx.wait timeout') {
+        // tx was broadcast but WalletConnect hung waiting for receipt — treat as attested
+        chips.forEach(c => onProgress(c.id, 'attested'))
+      } else {
+        // tx was cancelled or failed on-chain
+        chips.forEach(c => onProgress(c.id, 'error'))
+        throw waitErr
+      }
       return
     }
 
-    // Transaction confirmed — mark attested regardless of UID parsing
+    // Guard: if tx.wait() resolved but returned nothing, the tx likely failed silently
+    if (!uids) {
+      chips.forEach(c => onProgress(c.id, 'error'))
+      throw new Error('Attestation failed — transaction returned no receipt')
+    }
+
+    // Transaction confirmed — mark attested
     chips.forEach(c => onProgress(c.id, 'attested'))
 
     // UID extraction — uids should be string[] of bytes32 hex from Attested event logs

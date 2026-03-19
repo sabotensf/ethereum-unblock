@@ -40,13 +40,13 @@ const STACK = ['EAS', '0xSplits', 'NFC', 'DDEX', 'Ethereum']
 
 export default function Home() {
   return (
-    <div style={{backgroundColor: N.bg, color: N.fg}} className='min-h-screen flex flex-col'>
+    <div style={{backgroundColor: N.bg, color: N.fg3}} className='min-h-screen flex flex-col'>
 
       {/* Hero */}
       <section className='flex flex-col items-center justify-center text-center px-6 pt-20 pb-16 gap-6'>
 
         <h1 className='text-5xl sm:text-6xl font-bold tracking-tight leading-none'>
-          <span style={{color: N.fg}}>Record</span>
+          <span style={{color: N.fg3}}>Record</span>
           <span style={{color: N.frost}}>Pool</span>
         </h1>
 
@@ -100,7 +100,7 @@ export default function Home() {
               style={{backgroundColor: N.bg1, borderColor: N.bg2}}
               className='border p-5 flex flex-col gap-2'
             >
-              <p style={{color: N.fg}} className='text-sm font-semibold tracking-wide'>{f.label}</p>
+              <p style={{color: N.fg3}} className='text-sm font-semibold tracking-wide'>{f.label}</p>
               <p style={{color: N.fg3}} className='text-xs font-light leading-relaxed'>{f.description}</p>
             </div>
           ))}
@@ -113,7 +113,7 @@ export default function Home() {
       {/* Bottom CTA */}
       <section className='flex flex-col items-center text-center px-6 py-16 gap-4'>
         <p style={{color: N.teal}} className='text-[10px] font-mono tracking-widest'>BUILT ON ETHEREUM</p>
-        <h2 style={{color: N.fg}} className='text-2xl font-bold tracking-tight'>The record is the token.</h2>
+        <h2 style={{color: N.fg3}} className='text-2xl font-bold tracking-tight'>The record is the token.</h2>
         <p style={{color: N.fg3}} className='text-sm font-light max-w-sm leading-relaxed'>
           Ownership proven by hardware. Metadata attested by consensus. Revenue split by code.
         </p>
