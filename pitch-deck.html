@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RecordPool EAS — Pitch Deck</title>
+<style>
+  :root {
+    --bg:     #2e3440;
+    --bg1:    #3b4252;
+    --bg2:    #434c5e;
+    --bg3:    #4c566a;
+    --fg:     #eceff4;
+    --fg1:    #e5e9f0;
+    --fg2:    #d8dee9;
+    --frost:  #88c0d0;
+    --frost2: #81a1c1;
+    --frost3: #5e81ac;
+    --green:  #a3be8c;
+    --yellow: #ebcb8b;
+    --red:    #bf616a;
+    --purple: #b48ead;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%; height: 100%;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    overflow: hidden;
+  }
+
+  /* ── SLIDE ENGINE ───────────────────────────────────── */
+  .deck {
+    width: 100%; height: 100vh;
+    position: relative;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 80px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.45s ease, transform 0.45s ease;
+    transform: translateX(40px);
+  }
+
+  .slide.active {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateX(0);
+  }
+
+  .slide.prev {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+
+  /* ── NAV ────────────────────────────────────────────── */
+  .nav {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    z-index: 100;
+    background: rgba(46,52,64,0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--bg3);
+    border-radius: 999px;
+    padding: 10px 24px;
+  }
+
+  .nav button {
+    background: none;
+    border: none;
+    color: var(--fg2);
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px 10px;
+    border-radius: 6px;
+    transition: color 0.2s, background 0.2s;
+    line-height: 1;
+  }
+  .nav button:hover { color: var(--frost); background: var(--bg1); }
+
+  #counter {
+    font-size: 13px;
+    color: var(--fg2);
+    min-width: 52px;
+    text-align: center;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── PROGRESS BAR ───────────────────────────────────── */
+  .progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--frost), var(--purple));
+    transition: width 0.4s ease;
+    z-index: 101;
+  }
+
+  /* ── SLIDE NUMBER BADGE ─────────────────────────────── */
+  .slide-badge {
+    position: fixed;
+    top: 20px;
+    right: 28px;
+    font-size: 12px;
+    color: var(--bg3);
+    letter-spacing: 0.1em;
+    z-index: 100;
+  }
+
+  /* ── GLOBAL TEXT STYLES ─────────────────────────────── */
+  h1 { font-size: clamp(2.4rem, 5vw, 4rem); font-weight: 700; line-height: 1.1; }
+  h2 { font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 600; margin-bottom: 36px; }
+  h3 { font-size: 1.1rem; font-weight: 600; }
+  p  { font-size: 1.05rem; line-height: 1.65; color: var(--fg2); }
+
+  .tagline {
+    font-size: clamp(1rem, 2vw, 1.35rem);
+    color: var(--frost);
+    margin-top: 14px;
+    font-weight: 400;
+  }
+
+  .label {
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--bg3);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  /* ── ACCENT / HIGHLIGHT ─────────────────────────────── */
+  .frost   { color: var(--frost); }
+  .green   { color: var(--green); }
+  .yellow  { color: var(--yellow); }
+  .purple  { color: var(--purple); }
+  .red-col { color: var(--red); }
+
+  /* ── CARD / GRID ────────────────────────────────────── */
+  .card {
+    background: var(--bg1);
+    border: 1px solid var(--bg3);
+    border-radius: 14px;
+    padding: 28px 32px;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    width: 100%;
+    max-width: 900px;
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    width: 100%;
+    max-width: 960px;
+  }
+
+  .grid-4 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 18px;
+    width: 100%;
+    max-width: 1000px;
+  }
+
+  /* ── BULLET LISTS ───────────────────────────────────── */
+  ul.bullets {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+    max-width: 780px;
+  }
+
+  ul.bullets li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 1.05rem;
+    color: var(--fg2);
+    line-height: 1.55;
+  }
+
+  ul.bullets li .icon {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    margin-top: 1px;
+  }
+
+  .icon-red    { background: rgba(191,97,106,0.18); color: var(--red); }
+  .icon-green  { background: rgba(163,190,140,0.18); color: var(--green); }
+  .icon-frost  { background: rgba(136,192,208,0.18); color: var(--frost); }
+  .icon-yellow { background: rgba(235,203,139,0.18); color: var(--yellow); }
+  .icon-purple { background: rgba(180,142,173,0.18); color: var(--purple); }
+
+  /* ── FLOW STEPS ─────────────────────────────────────── */
+  .flow {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    width: 100%;
+    max-width: 1020px;
+  }
+
+  .flow-step {
+    flex: 1;
+    background: var(--bg1);
+    border: 1px solid var(--bg3);
+    border-radius: 12px;
+    padding: 24px 18px;
+    text-align: center;
+    position: relative;
+  }
+
+  .flow-arrow {
+    display: flex;
+    align-items: center;
+    padding: 0 4px;
+    color: var(--bg3);
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .flow-step .step-num {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--bg3);
+    margin-bottom: 10px;
+  }
+
+  .flow-step .step-icon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+
+  .flow-step h3 {
+    font-size: 0.9rem;
+    color: var(--fg);
+    margin-bottom: 6px;
+  }
+
+  .flow-step p {
+    font-size: 0.78rem;
+    color: var(--fg2);
+    line-height: 1.5;
+  }
+
+  /* ── TECH STACK PILLS ───────────────────────────────── */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--bg1);
+    border: 1px solid var(--bg3);
+    border-radius: 999px;
+    padding: 8px 18px;
+    font-size: 0.9rem;
+    color: var(--fg1);
+    white-space: nowrap;
+  }
+
+  .pills-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    max-width: 800px;
+  }
+
+  /* ── SPLIT BAR ──────────────────────────────────────── */
+  .split-bar {
+    display: flex;
+    width: 100%;
+    max-width: 560px;
+    height: 48px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--bg3);
+    margin: 20px auto;
+  }
+  .split-bar .seg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  .split-artist { background: var(--green); color: #1a2020; flex: 4; }
+  .split-pool   { background: var(--frost2); color: #0d1a22; flex: 1; }
+
+  /* ── QUOTE ──────────────────────────────────────────── */
+  .quote-block {
+    border-left: 3px solid var(--frost);
+    padding: 14px 24px;
+    background: var(--bg1);
+    border-radius: 0 12px 12px 0;
+    max-width: 700px;
+    font-style: italic;
+    color: var(--fg2);
+    font-size: 1.05rem;
+    line-height: 1.65;
+  }
+
+  /* ── BIG STAT ───────────────────────────────────────── */
+  .big-stat {
+    text-align: center;
+  }
+  .big-stat .num {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 800;
+    line-height: 1;
+  }
+  .big-stat .unit {
+    font-size: 1rem;
+    color: var(--fg2);
+    margin-top: 4px;
+  }
+
+  /* ── SLIDE-SPECIFIC ─────────────────────────────────── */
+
+  /* S1 — Title */
+  #s1 {
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba(136,192,208,0.08) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 30%, rgba(180,142,173,0.07) 0%, transparent 50%),
+      var(--bg);
+  }
+  #s1 .title-wrap { text-align: center; }
+  #s1 .logo-ring {
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    border: 2px solid var(--frost);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.4rem;
+    margin: 0 auto 28px;
+    background: radial-gradient(circle, rgba(136,192,208,0.12), transparent);
+    box-shadow: 0 0 40px rgba(136,192,208,0.18);
+  }
+  #s1 .event-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 32px;
+    background: var(--bg1);
+    border: 1px solid var(--bg3);
+    border-radius: 999px;
+    padding: 8px 20px;
+    font-size: 0.82rem;
+    color: var(--fg2);
+  }
+  #s1 .event-badge .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50%      { opacity: 0.5; transform: scale(1.4); }
+  }
+
+  /* S3 — Solution */
+  #s3 {
+    background:
+      radial-gradient(ellipse at 70% 60%, rgba(163,190,140,0.07) 0%, transparent 50%),
+      var(--bg);
+  }
+
+  /* S4 — Flow */
+  #s4 {
+    background:
+      radial-gradient(ellipse at 50% 80%, rgba(136,192,208,0.06) 0%, transparent 50%),
+      var(--bg);
+  }
+
+  /* S6 — Demo */
+  #s6 .demo-card {
+    background: var(--bg1);
+    border: 1px solid var(--bg3);
+    border-radius: 16px;
+    padding: 36px 48px;
+    text-align: center;
+    max-width: 560px;
+    width: 100%;
+  }
+  #s6 .vinyl {
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at center, var(--bg3) 0%, var(--bg3) 12%, var(--bg) 12%, var(--bg) 15%,
+        var(--bg3) 15%, var(--bg3) 17%, var(--bg) 17%, var(--bg) 48%,
+        var(--bg3) 48%, var(--bg3) 50%, var(--bg) 50%);
+    border: 2px solid var(--bg3);
+    margin: 0 auto 20px;
+    box-shadow: 0 0 40px rgba(136,192,208,0.15);
+    animation: spin 8s linear infinite;
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  /* S8 — Built at */
+  #s8 {
+    background:
+      radial-gradient(ellipse at 30% 40%, rgba(180,142,173,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 75% 70%, rgba(136,192,208,0.07) 0%, transparent 45%),
+      var(--bg);
+  }
+
+  /* ── TIMELINE ───────────────────────────────────────── */
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+    max-width: 680px;
+  }
+  .tl-item {
+    display: flex;
+    gap: 20px;
+    position: relative;
+  }
+  .tl-item:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 32px;
+    bottom: -8px;
+    width: 2px;
+    background: var(--bg3);
+  }
+  .tl-dot {
+    flex-shrink: 0;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    margin-top: 2px;
+  }
+  .tl-content {
+    padding-bottom: 22px;
+  }
+  .tl-content h3 { font-size: 1rem; color: var(--fg); margin-bottom: 4px; }
+  .tl-content p  { font-size: 0.88rem; color: var(--fg2); line-height: 1.5; }
+
+  /* ── NEXT STEPS TABLE ───────────────────────────────── */
+  .next-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    width: 100%;
+    max-width: 860px;
+  }
+  .next-card {
+    background: var(--bg1);
+    border: 1px solid var(--bg3);
+    border-radius: 12px;
+    padding: 22px 24px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .next-card .nc-icon {
+    font-size: 1.6rem;
+    flex-shrink: 0;
+  }
+  .next-card h3 { font-size: 0.95rem; color: var(--fg); margin-bottom: 5px; }
+  .next-card p  { font-size: 0.82rem; color: var(--fg2); line-height: 1.5; }
+
+  /* ── CTA ────────────────────────────────────────────── */
+  #s10 {
+    background:
+      radial-gradient(ellipse at 50% 40%, rgba(136,192,208,0.10) 0%, transparent 55%),
+      var(--bg);
+  }
+  .cta-links {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 28px;
+  }
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 13px 28px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .cta-btn:hover { opacity: 0.85; transform: translateY(-2px); }
+  .cta-primary   { background: var(--frost); color: #1a2a30; }
+  .cta-secondary { background: var(--bg1); border: 1px solid var(--bg3); color: var(--fg1); }
+
+  /* ── SLIDE LABEL STRIP ──────────────────────────────── */
+  .slide-label {
+    position: absolute;
+    top: 32px;
+    left: 80px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--bg3);
+  }
+
+  /* ── RESPONSIVE HELP ────────────────────────────────── */
+  @media (max-width: 768px) {
+    .slide { padding: 40px 28px; }
+    .grid-2, .grid-3, .grid-4, .next-grid { grid-template-columns: 1fr; }
+    .flow { flex-direction: column; }
+    .flow-arrow { transform: rotate(90deg); align-self: center; }
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.4rem; }
+    .slide-label { left: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="slide-badge" id="slide-badge">1 / 10</div>
+
+<div class="deck" id="deck">
+
+  <!-- ══════════════════════════════════════════════════════
+       S1  TITLE
+  ══════════════════════════════════════════════════════ -->
+  <section class="slide active" id="s1">
+    <div class="title-wrap">
+      <div class="logo-ring">&#9675;</div>
+      <div class="label">Ethereum Unblock 2026</div>
+      <h1><span class="frost">Record</span><span style="color:var(--fg)">Pool</span> <span class="purple">EAS</span></h1>
+      <p class="tagline">Phygital music record provenance —<br>NFC tap &rarr; onchain attestation &rarr; royalty split</p>
+      <div class="event-badge">
+        <span class="dot"></span>
+        Built at Ethereum Unblock &nbsp;&middot;&nbsp; AI Design Sprint &nbsp;&middot;&nbsp; March 10–12, 2026 &nbsp;&middot;&nbsp; Frontier Tower SF
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       S2  PROBLEM
+  ══════════════════════════════════════════════════════ -->
+  <section class="slide" id="s2">
+    <div class="slide-label">The Problem</div>
+    <h2>Music Rights Are <span class="red-col">Broken</span></h2>
+    <ul class="bullets">
+      <li>
+        <span class="icon icon-red">&#9650;</span>
+        <span><strong style="color:var(--fg)">Opaque ownership.</strong> Physical vinyl records carry zero verifiable provenance — no chain of custody, no onchain identity.</span>
+      </li>
+      <li>
+        <span class="icon icon-red">&#9650;</span>
+        <span><strong style="color:var(--fg)">Fragmented rights.</strong> Music rights are split across labels, distributors, and publishers with no single source of truth.</span>
+      </li>
+      <li>
+        <span class="icon icon-red">&#9650;</span>
+        <span><strong style="color:var(--fg)">Slow, centralized royalties.</strong> Artists wait 12–18 months for royalty payments routed through opaque intermediaries.</span>
+      </li>
+      <li>
+        <span class="icon icon-red">&#9650;</span>
+        <span><strong style="color:var(--fg)">No phygital bridge.</strong> The physical record in your hands is disconnected from any digital rights, streaming data, or onchain value.</span>
+      </li>
+      <li>
+        <span class="icon icon-red">&#9650;</span>
+        <span><strong style="color:var(--fg)">Counterfeit risk.</strong> Bootleg pressings are undetectable — there's no hardware-level authentication for physical media.</span>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       S3  SOLUTION
+  ══════════════════════════════════════════════════════ -->
+  <section class="slide" id="s3">
+    <div class="slide-label">The Solution</div>
+    <h2>One Tap. <span class="green">Provenance Proven.</span> Royalties Paid.</h2>
+    <div class="grid-2" style="max-width:860px;">
+      <div class="card">
+        <div style="font-size:1.8rem;margin-bottom:12px;">&#128191;</div>
+        <h3 class="frost" style="margin-bottom:8px;">Hardware Authentication</h3>
+        <p>Every record is embedded with an NTAG 424 DNA SDM NFC chip. The chip generates a cryptographically unique, tamper-evident URL on every tap — hardware-enforced authenticity.</p>
+      </div>
+      <div class="card">
+        <div style="font-size:1.8rem;margin-bottom:12px;">&#128279;</div>
+        <h3 class="green" style="margin-bottom:8px;">Onchain Attestation</h3>
+        <p>Each registered record is attested via EAS (Ethereum Attestation Service) on Sepolia. The UID is the immutable anchor linking physical chip to onchain identity.</p>
+      </div>
+      <div class="card">
+        <div style="font-size:1.8rem;margin-bottom:12px;">&#127925;</div>
+        <h3 class="yellow" style="margin-bottom:8px;">Gated Audio Playback</h3>
+        <p>Tapping unlocks the artist's master recording — a direct connection between owning the physical record and accessing the digital work.</p>
+      </div>
+      <div class="card">
+        <div style="font-size:1.8rem;margin-bottom:12px;">&#9889;</div>
+        <h3 class="purple" style="margin-bottom:8px;">Instant Royalty Splits</h3>
+        <p>0xSplits distributes royalties on-demand: 80% artist / 20% RecordPool. No intermediaries. No 18-month wait. Programmable, transparent, and auditable.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       S4  HOW IT WORKS
+  ══════════════════════════════════════════════════════ -->
+  <section class="slide" id="s4">
+    <div class="slide-label">Tap Flow</div>
+    <h2>How It <span class="frost">Works</span></h2>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="step-num">01</div>
+        <div class="step-icon">&#128241;</div>
+        <h3>iPhone Tap</h3>
+        <p>User holds phone to NFC chip on vinyl record. Chip generates unique URL with UID + hardware play counter.</p>
+      </div>
+      <div class="flow-arrow">&#8250;</div>
+      <div class="flow-step">
+        <div class="step-num">02</div>
+        <div class="step-icon">&#128272;</div>
+        <h3>Server Session</h3>
+        <p>API validates the SDM signature, creates a tap session, and redirects browser to the /tap page.</p>
+      </div>
+      <div class="flow-arrow">&#8250;</div>
+      <div class="flow-step">
+        <div class="step-num">03</div>
+        <div class="step-icon">&#9729;</div>
+        <h3>EAS Query</h3>
+        <p>Client queries Ethereum Attestation Service on Sepolia — looks up the UID to verify onchain record provenance.</p>
+      </div>
+      <div class="flow-arrow">&#8250;</div>
+      <div class="flow-step">
+        <div class="step-num">04</div>
+        <div class="step-icon">&#127925;</div>
+        <h3>Audio Unlock</h3>
+        <p>On attestation match: audio playback unlocks and a 0xSplits royalty distribution is triggered automatically.</p>
+      </div>
+      <div class="flow-arrow">&#8250;</div>
+      <div class="flow-step">
+        <div class="step-num">05</div>
+        <div class="step-icon">&#9889;</div>
+        <h3>Splits Pay Out</h3>
+        <p>80% flows to the artist. 20% to RecordPool. Onchain, immediate, auditable by anyone.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       S5  TECH STACK
+  ══════════════════════════════════════════════════════ -->
+  <section class="slide" id="s5">
+    <div class="slide-label">Tech Stack</div>
+    <h2>Built on <span class="frost">Open Standards</span></h2>
+    <div class="grid-3" style="max-width:900px;">
+      <div class="card" style="text-align:center;">
+        <div style="font-size:1.6rem;margin-bottom:10px;">&#128296;</div>
+        <div class="label">Frontend</div>
+        <h3 style="margin-bottom:8px;">Next.js 15</h3>
+        <p style="font-size:0.85rem;">App Router, Server Components, API routes. Wagmi + Viem for Ethereum. WalletConnect for wallet auth.</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:1.6rem;margin-bottom:10px;">&#128279;</div>
+        <div class="label">Attestation</div>
+        <h3 style="margin-bottom:8px;" class="frost">EAS</h3>
+        <p style="font-size:0.85rem;">Ethereum Attestation Service on Sepolia testnet. Custom schema anchoring chip UID to record metadata.</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:1.6rem;margin-bottom:10px;">&#9889;</div>
+        <div class="label">Royalties</div>
+        <h3 style="margin-bottom:8px;" class="green">0xSplits</h3>
+        <p style="font-size:0.85rem;">Immutable onchain split contracts. 80/20 artist/pool ratio. Permissionless distribution.</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:1.6rem;margin-bottom:10px;">&#128191;</div>
+        <div class="label">Hardware</div>
+        <h3 style="margin-bottom:8px;" class="yellow">NTAG 424 DNA</h3>
+        <p style="font-size:0.85rem;">SDM (Secure Dynamic Messaging) chips. Unique URL per tap with AES-128 CMAC authentication.</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:1.6rem;margin-bottom:10px;">&#127981;</div>
+        <div class="label">Governance</div>
+        <h3 style="margin-bottom:8px;" class="purple">Zodiac</h3>
+        <p style="font-size:0.85rem;">Module-based DAO tooling for managing registry admin access and protocol upgrades.</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:1.6rem;margin-bottom:10px;">&#127981;</div>
+        <div class="label">Network</div>
+        <h3 style="margin-bottom:8px;">Sepolia</h3>
+        <p style="font-size:0.85rem;">Ethereum testnet. Production-ready architecture — mainnet deployment is a config change.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       S6  DEMO
+  ══════════════════════════════════════════════════════ -->
+  <section class="slide" id="s6">
+    <div class="slide-label">Live Demo</div>
+    <h2>Demo Record: <span class="yellow">"Teddy Bear Boogie"</span></h2>
+    <div style="display:flex;gap:40px;align-items:center;flex-wrap:wrap;justify-content:center;">
+      <div class="demo-card">
+        <div class="vinyl"></div>
+        <p class="label" style="text-align:center;">Now Playing</p>
+        <h3 style="text-align:center;font-size:1.1rem;margin-bottom:4px;">Teddy Bear Boogie</h3>
+        <p style="text-align:center;font-size:0.85rem;color:var(--fg2);">Teddy Powell and His Orchestra<br>1940 &middot; Decca Records</p>
+        <div style="margin-top:18px;padding-top:18px;border-top:1px solid var(--bg3);">
+          <div style="display:flex;justify-content:space-between;font-size:0.8rem;color:var(--fg2);margin-bottom:6px;">
+            <span>EAS Attestation</span>
+            <span class="green">&#10003; Verified</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.8rem;color:var(--fg2);margin-bottom:6px;">
+            <span>NFC Chip UID</span>
+            <span class="frost" style="font-family:monospace;font-size:0.75rem;">04:A1:B2:C3:D4:E5</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.8rem;color:var(--fg2);margin-bottom:6px;">
+            <span>Play Count</span>
+            <span>247</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.8rem;color:var(--fg2);">
+            <span>Split Triggered</span>
+            <span class="green">80% Artist / 20% Pool</span>
+          </div>
+        </div>
+      </div>
+      <div style="max-width:340px;">
+        <ul class="bullets">
+          <li>
+            <span class="icon icon-frost">&#9670;</span>
+            <span>Tap any registered record with iPhone — no app needed</span>
+          </li>
+          <li>
+            <span class="icon icon-green">&#10003;</span>
+            <span>EAS lookup confirms chip UID matches onchain attestation in &lt;2s</span>
+          </li>
+          <li>
+            <span class="icon icon-yellow">&#9834;</span>
+            <span>Master recording streams directly in the browser</span>
+          </li>
+          <li>
+            <span class="icon icon-purple">&#9889;</span>
+            <span>0xSplits contract distributes royalty share atomically</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       S7  BUSINESS MODEL
+  ══════════════════════════════════════════════════════ -->
+  <section class="slide" id="s7">
+    <div class="slide-label">Business Model</div>
+    <h2>Transparent <span class="green">Revenue Sharing</span></h2>
+    <div style="width:100%;max-width:700px;">
+      <p style="text-align:center;margin-bottom:8px;font-size:0.9rem;color:var(--fg2);">Per-tap royalty distribution via 0xSplits</p>
+      <div class="split-bar">
+        <div class="seg split-artist">80% — Artist</div>
+        <div class="seg split-pool">20% Pool</div>
+      </div>
+      <div class="grid-3" style="margin-top:28px;max-width:700px;">
+        <div class="card" style="text-align:center;">
+          <div class="label">Revenue Stream 1</div>
+          <h3 class="green">Per-Tap Royalties</h3>
+          <p style="font-size:0.82rem;margin-top:6px;">Every authenticated tap triggers a micro-royalty. Accumulates across thousands of plays.</p>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div class="label">Revenue Stream 2</div>
+          <h3 class="frost">Registry Fees</h3>
+          <p style="font-size:0.82rem;margin-top:6px;">Labels and distributors pay to register new records — UID attestation + NDEF writing service.</p>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div class="label">Revenue Stream 3</div>
+          <h3 class="yellow">Premium Access</h3>
+          <p style="font-size:0.82rem;margin-top:6px;">Gated content tiers — bonus tracks, liner notes, live recordings — unlockable by chip owners.</p>
+        </div>
+      </div>
+      <div class="quote-block" style="margin-top:28px;">
+        "RecordPool acts as the trusted registry — the EAS schema owner and royalty coordinator — while artists retain 80% of every distribution, payable at any time without intermediaries."
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       S8  BUILT AT ETHEREUM UNBLOCK
+  ══════════════════════════════════════════════════════ -->
+  <section class="slide" id="s8">
+    <div class="slide-label">Origins</div>
+    <h2>Built at <span class="purple">Ethereum Unblock</span></h2>
+    <div style="display:flex;gap:48px;align-items:flex-start;flex-wrap:wrap;justify-content:center;width:100%;max-width:900px;">
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot icon-frost" style="background:rgba(136,192,208,0.18);color:var(--frost);font-size:14px;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;">1</div>
+          <div class="tl-content">
+            <h3>Day 1 — March 10</h3>
+            <p>AI-driven design sprint kickoff. Problem framing, EAS schema design, NFC chip research and hardware procurement.</p>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot icon-yellow" style="background:rgba(235,203,139,0.18);color:var(--yellow);font-size:14px;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;">2</div>
+          <div class="tl-content">
+            <h3>Day 2 — March 11</h3>
+            <p>End-to-end integration: tap API, EAS query client, 0xSplits contract wiring, admin panel for batch chip registration.</p>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot icon-green" style="background:rgba(163,190,140,0.18);color:var(--green);font-size:14px;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;">3</div>
+          <div class="tl-content">
+            <h3>Day 3 — March 12</h3>
+            <p>Polish, live demo with real vinyl. "Teddy Bear Boogie" authenticated and played back in front of EF judges.</p>
+          </div>
+        </div>
+      </div>
+      <div style="max-width:340px;">
+        <div class="card" style="margin-bottom:16px;">
+          <div class="label">Organizer</div>
+          <h3 style="margin-bottom:4px;">Ethereum Foundation</h3>
+          <p style="font-size:0.85rem;">Frontier Tower SF &middot; March 10–12, 2026</p>
+        </div>
+        <div class="card" style="margin-bottom:16px;">
+          <div class="label">Creator</div>
+          <h3 style="margin-bottom:4px;">David Geddes <span class="frost" style="font-weight:400;">/ sabotensf</span></h3>
+          <p style="font-size:0.85rem;">Founder, RecordPool<br>Ethereum Unblock SF</p>
+        </div>
+        <div class="card">
+          <div class="label">Repository</div>
+          <p style="font-size:0.82rem;font-family:monospace;color:var(--frost);">github.com/sabotensf/<br>ethereum-unblock</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       S9  NEXT STEPS
+  ══════════════════════════════════════════════════════ -->
+  <section class="slide" id="s9">
+    <div class="slide-label">Roadmap</div>
+    <h2>Next <span class="frost">Steps</span></h2>
+    <div class="next-grid">
+      <div class="next-card">
+        <div class="nc-icon">&#127981;</div>
+        <div>
+          <h3>Mainnet Deployment</h3>
+          <p>Migrate EAS attestations and 0xSplits contracts from Sepolia to Ethereum mainnet. Config-level change — architecture is production-ready.</p>
+        </div>
+      </div>
+      <div class="next-card">
+        <div class="nc-icon">&#128191;</div>
+        <div>
+          <h3>Label Partnerships</h3>
+          <p>Onboard independent labels to register new pressings. Provide chip embedding service and admin tooling for batch NDEF write + EAS attestation.</p>
+        </div>
+      </div>
+      <div class="next-card">
+        <div class="nc-icon">&#128179;</div>
+        <div>
+          <h3>Collector Wallets</h3>
+          <p>Link chip tap to collector wallet identity. Build tap history, play-count leaderboards, and provenance transfer on record resale.</p>
+        </div>
+      </div>
+      <div class="next-card">
+        <div class="nc-icon">&#127925;</div>
+        <div>
+          <h3>Expanded Content Tiers</h3>
+          <p>Unlock bonus tracks, hi-res masters, and digital liner notes gated by chip ownership — a new revenue channel for artists.</p>
+        </div>
+      </div>
+      <div class="next-card">
+        <div class="nc-icon">&#127981;</div>
+        <div>
+          <h3>DAO Governance</h3>
+          <p>Activate Zodiac modules so artists and collectors govern the EAS schema registry — decentralizing the protocol over time.</p>
+        </div>
+      </div>
+      <div class="next-card">
+        <div class="nc-icon">&#127760;</div>
+        <div>
+          <h3>Cross-Chain Splits</h3>
+          <p>Expand 0xSplits to Layer 2s (Base, Optimism) for near-zero gas royalty distributions on high-volume catalogs.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       S10  CALL TO ACTION
+  ══════════════════════════════════════════════════════ -->
+  <section class="slide" id="s10">
+    <div class="slide-label">Get Involved</div>
+    <div style="text-align:center;max-width:700px;">
+      <div style="font-size:3rem;margin-bottom:20px;">&#9675;</div>
+      <h1 style="font-size:clamp(1.8rem,4vw,3rem);margin-bottom:16px;">
+        Tap a Record.<br><span class="frost">Prove Provenance.</span><br>Pay the Artist.
+      </h1>
+      <p style="font-size:1.05rem;max-width:560px;margin:0 auto 8px;">
+        RecordPool EAS makes physical vinyl the source of truth for music rights —
+        secured by NFC hardware, anchored by EAS attestations, and distributed by 0xSplits.
+      </p>
+      <p style="font-size:0.9rem;color:var(--fg2);max-width:500px;margin:0 auto;">
+        We're looking for label partners, collectors, and EF ecosystem collaborators to scale the protocol.
+      </p>
+      <div class="cta-links">
+        <a class="cta-btn cta-primary" href="https://github.com/sabotensf/ethereum-unblock" target="_blank">
+          &#128279;&nbsp; View on GitHub
+        </a>
+        <a class="cta-btn cta-secondary" href="mailto:david@recordpool.xyz">
+          &#9993;&nbsp; david@recordpool.xyz
+        </a>
+        <a class="cta-btn cta-secondary" href="https://warpcast.com/sabotensf" target="_blank">
+          &#9730;&nbsp; @sabotensf
+        </a>
+      </div>
+      <div style="margin-top:40px;padding-top:24px;border-top:1px solid var(--bg3);display:flex;gap:48px;justify-content:center;flex-wrap:wrap;">
+        <div class="big-stat">
+          <div class="num frost">EAS</div>
+          <div class="unit">Ethereum Attestation Service</div>
+        </div>
+        <div class="big-stat">
+          <div class="num green">80%</div>
+          <div class="unit">To the Artist, Always</div>
+        </div>
+        <div class="big-stat">
+          <div class="num yellow">NFC</div>
+          <div class="unit">NTAG 424 DNA SDM</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /deck -->
+
+<!-- ── NAVIGATION ─────────────────────────────────────── -->
+<div class="nav">
+  <button id="btn-prev" title="Previous (&#8592;)">&#8592;</button>
+  <span id="counter">1 / 10</span>
+  <button id="btn-next" title="Next (&#8594;)">&#8594;</button>
+</div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const total  = slides.length;
+  let current  = 0;
+
+  function goTo(n) {
+    if (n < 0 || n >= total) return;
+
+    slides[current].classList.remove('active');
+    slides[current].classList.add('prev');
+
+    // Clear prev class after transition
+    const old = current;
+    setTimeout(() => slides[old].classList.remove('prev'), 500);
+
+    current = n;
+    slides[current].classList.add('active');
+
+    // Update counter + badge + progress
+    const label = `${current + 1} / ${total}`;
+    document.getElementById('counter').textContent    = label;
+    document.getElementById('slide-badge').textContent = label;
+    document.getElementById('progress').style.width   =
+      ((current + 1) / total * 100) + '%';
+  }
+
+  document.getElementById('btn-prev').addEventListener('click', () => goTo(current - 1));
+  document.getElementById('btn-next').addEventListener('click', () => goTo(current + 1));
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown'  || e.key === ' ') goTo(current + 1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')                      goTo(current - 1);
+  });
+
+  // Touch / swipe
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].clientX; });
+  document.addEventListener('touchend',   e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 50) goTo(current + (dx < 0 ? 1 : -1));
+  });
+
+  // Init progress bar
+  goTo(0);
+</script>
+</body>
+</html>
