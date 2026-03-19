@@ -3,7 +3,7 @@ export const SITE_NAME = 'RecordPool Unblock Demo'
 export const SITE_INFO = 'Phygital Music on the Blockchain'
 export const SITE_DESCRIPTION =
   'A demo site for the latest prototype of RecordPool using EAS (Ethereum Attestation Service)'
-export const SITE_URL = 'https://nexth.vercel.app'
+export const SITE_URL = 'https://github.com/sabotensf/ethereum-unblock'
 
-export const SOCIAL_TWITTER = 'wslyvh'
-export const SOCIAL_GITHUB = 'wslyvh/nexth'
+export const SOCIAL_TWITTER = ''
+export const SOCIAL_GITHUB = 'sabotensf/ethereum-unblock'
