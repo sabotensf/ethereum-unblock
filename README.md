@@ -11,7 +11,7 @@ Bootstrapped quickly using [Nexth](https://github.com/usecaselab/nexth) from the
 - Next.js 15 (App Router)
 - Ethereum Attestation Service (EAS)
 - 0xSplits
-- NTAG SDM NFC chips
+- NTAG424 DNA NFC chips (written via ACR1552 USB reader using MIRROR tags to generate the UID and tap counter at scan time)
 - Wagmi / Viem / WalletConnect
 
 ## Dev
